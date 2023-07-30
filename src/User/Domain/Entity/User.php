@@ -21,9 +21,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     use UpdatedAtTrait;
 
     #[ORM\Column(type: 'string', length: 50)]
-    private string $deneme;
-
-    #[ORM\Column(type: 'string', length: 50)]
     private string $name;
 
     #[ORM\Column(type: 'string', length: 50)]
