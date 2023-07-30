@@ -12,3 +12,4 @@ Feature branch name prefix: "HD-{number} (Ticket Title)"
 
 # [Database Schema](https://drawsql.app/teams/furkantopcuoglu/diagrams/helpdesk-tickets-system-api/embed)
 
+![Database Schema](https://furkantopcuoglu.com/heldesk-database-schema.png)
