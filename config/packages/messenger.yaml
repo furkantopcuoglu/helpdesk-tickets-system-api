@@ -1,0 +1,17 @@
+framework:
+    messenger:
+        failure_transport: failed
+        transports:
+            sync: 'sync://'
+
+            failed:
+                dsn: '%env(MESSENGER_TRANSPORT_FAILURE_DSN)%'
+                retry_strategy:
+                    max_retries: '%messenger.default_max_retries%'
+
+            async:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                retry_strategy:
+                    max_retries: '%messenger.default_max_retries%'
+
+        routing:

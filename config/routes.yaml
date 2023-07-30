@@ -1,0 +1,14 @@
+api_login_check:
+    path: /api/login_check
+
+app_controllers:
+    resource: ../src/App/Presentation/
+    type: annotation
+
+api_user_controllers:
+    resource: ../src/User/Presentation/
+    type: annotation
+
+kernel:
+    resource: ../src/App/Kernel.php
+    type: annotation

@@ -1,0 +1,62 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+    # Messenger
+    messenger.default_max_retries: 15
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/App'
+        exclude:
+            - '../src/App/DependencyInjection/'
+            - '../src/App/Kernel.php'
+
+    User\:
+        resource: '../src/User/'
+        exclude: '../src/User/Domain/{Entity}'
+
+    Common\:
+        resource: '../src/Common/'
+        exclude: '../src/Common/Domain/{DataTransferObject}'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    App\Presentation\:
+        resource: '../src/App/Presentation/'
+        tags: [ 'controller.service_arguments' ]
+        exclude: '../src/App/Presentation/AbstractController.php'
+
+    User\Presentation\:
+        resource: '../src/User/Presentation/'
+        tags: [ 'controller.service_arguments' ]
+
+
+    App\Infrastructure\Security\JWTCreatedListener:
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created }
+
+    App\Application\EventListener\JsonResponseListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.view }
+
+    App\Application\EventListener\Exception\ExceptionListener:
+        arguments:
+            - "@parameter_bag"
+            - "@nelmio_cors.options_resolver"
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
+
+    App\Application\EventListener\ContentBodyListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, priority: 1 }
