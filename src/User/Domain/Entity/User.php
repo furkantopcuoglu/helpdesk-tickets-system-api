@@ -3,10 +3,13 @@
 namespace User\Domain\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Domain\Entity\UserCategory;
 use Common\Application\Traits\UuidTrait;
 use Common\Application\Traits\Deleteable;
+use Doctrine\Common\Collections\Collection;
 use Common\Application\Traits\CreatedAtTrait;
 use Common\Application\Traits\UpdatedAtTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Security\Core\User\UserInterface;
 use User\Infrastructure\Repositories\Doctrine\UserRepository;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -40,6 +43,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'datetime', nullable: true, options: ['default' => null])]
     private ?\DateTimeInterface $tokenValidAfter = null;
+
+    /**
+     * @var Collection<int, UserCategory>
+     */
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserCategory::class, fetch: 'EAGER', )]
+    private Collection $userCategories;
+
+    public function __construct()
+    {
+        $this->userCategories = new ArrayCollection();
+    }
 
     /**
      * @see UserInterface
@@ -147,5 +161,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTokenValidAfter(?\DateTimeInterface $tokenValidAfter): void
     {
         $this->tokenValidAfter = $tokenValidAfter;
+    }
+
+    public function getUserCategories(): Collection
+    {
+        return $this->userCategories;
     }
 }
