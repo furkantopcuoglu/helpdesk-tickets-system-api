@@ -3,9 +3,10 @@
 namespace User\Application\Queries\User\Find;
 
 use User\Domain\Entity\User;
+use Common\Domain\Bus\Query\QueryHandler;
 use User\Infrastructure\Repositories\Doctrine\UserRepository;
 
-class FindUserQueryHandler
+class FindUserQueryHandler implements QueryHandler
 {
     private UserRepository $userRepository;
 
@@ -15,7 +16,7 @@ class FindUserQueryHandler
         $this->userRepository = $userRepository;
     }
 
-    public function handle(FindUserQuery $query): ?User
+    public function __invoke(FindUserQuery $query): ?User
     {
         return $this->userRepository->findOneBy([
             'id' => $query->getUserId(),

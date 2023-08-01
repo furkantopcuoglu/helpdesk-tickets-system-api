@@ -4,15 +4,16 @@ namespace App\Application\Commands\Status\Create;
 
 use App\Domain\Entity\Status;
 use Doctrine\ORM\EntityManagerInterface;
+use Common\Domain\Bus\Command\CommandHandler;
 
-readonly class CreateStatusCommandHandler
+readonly class CreateStatusCommandHandler implements CommandHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function handle(CreateStatusCommand $command): Status
+    public function __invoke(CreateStatusCommand $command): Status
     {
         $status = new Status();
 

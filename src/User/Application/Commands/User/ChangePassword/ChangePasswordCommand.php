@@ -3,8 +3,9 @@
 namespace User\Application\Commands\User\ChangePassword;
 
 use User\Domain\Entity\User;
+use Common\Domain\Bus\Command\Command;
 
-class ChangePasswordCommand
+class ChangePasswordCommand implements Command
 {
     private User $user;
     private string $plainPassword;

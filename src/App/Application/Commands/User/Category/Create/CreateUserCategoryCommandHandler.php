@@ -4,15 +4,16 @@ namespace App\Application\Commands\User\Category\Create;
 
 use App\Domain\Entity\UserCategory;
 use Doctrine\ORM\EntityManagerInterface;
+use Common\Domain\Bus\Command\CommandHandler;
 
-readonly class CreateUserCategoryCommandHandler
+readonly class CreateUserCategoryCommandHandler implements CommandHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function handle(CreateUserCategoryCommand $command): UserCategory
+    public function __invoke(CreateUserCategoryCommand $command): UserCategory
     {
         $userCategory = new UserCategory();
 

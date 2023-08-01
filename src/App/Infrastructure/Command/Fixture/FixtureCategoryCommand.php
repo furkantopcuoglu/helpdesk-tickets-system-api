@@ -2,16 +2,16 @@
 
 namespace App\Infrastructure\Command\Fixture;
 
-use Ramsey\Uuid\Uuid;
-use Doctrine\DBAL\Connection;
 use App\Application\Enum\CategoryType;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Common\Infrastructure\MessageBus\MessengerQueryBus;
+use Common\Infrastructure\MessageBus\MessengerCommandBus;
+use App\Application\Commands\Category\Create\CreateCategoryCommand;
 use App\Application\Queries\Category\FindOneBy\FindOneByCategoryQuery;
-use App\Application\Queries\Category\FindOneBy\FindOneByCategoryQueryHandler;
 
 #[AsCommand(
     name: 'fixture:category',
@@ -20,8 +20,8 @@ use App\Application\Queries\Category\FindOneBy\FindOneByCategoryQueryHandler;
 class FixtureCategoryCommand extends Command
 {
     public function __construct(
-        private readonly Connection $dbal,
-        private readonly FindOneByCategoryQueryHandler $findOneByCategoryQueryHandler,
+        private readonly MessengerQueryBus $queryBus,
+        private readonly MessengerCommandBus $commandBus,
     ) {
         parent::__construct();
     }
@@ -31,7 +31,7 @@ class FixtureCategoryCommand extends Command
         $style = new SymfonyStyle($input, $output);
 
         foreach (CategoryType::cases() as $category) {
-            $isExist = $this->findOneByCategoryQueryHandler->handle(new FindOneByCategoryQuery([
+            $isExist = $this->queryBus->handle(new FindOneByCategoryQuery([
                 'name' => $category->value,
             ]));
 
@@ -41,12 +41,11 @@ class FixtureCategoryCommand extends Command
                 continue;
             }
 
-            $this->dbal->insert('categories', [
-                'id' => Uuid::uuid4()->toString(),
+            $this->commandBus->handle(new CreateCategoryCommand([
                 'name' => $category->value,
                 'color' => CategoryType::getColor($category),
-                'is_default' => true,
-            ]);
+                'isDefault' => true,
+            ]));
 
             $style->success(sprintf('%s added.', $category->value));
         }

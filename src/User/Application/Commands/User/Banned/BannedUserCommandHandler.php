@@ -4,15 +4,16 @@ namespace User\Application\Commands\User\Banned;
 
 use User\Domain\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Common\Domain\Bus\Command\CommandHandler;
 
-readonly class BannedUserCommandHandler
+readonly class BannedUserCommandHandler implements CommandHandler
 {
     public function __construct(
         public EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function handle(BannedUserCommand $command): User
+    public function __invoke(BannedUserCommand $command): User
     {
         $user = $command->user;
 
