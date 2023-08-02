@@ -2,6 +2,7 @@
 
 namespace User\Domain\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Domain\Entity\UserCategory;
 use Common\Application\Traits\UuidTrait;
@@ -23,25 +24,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     use CreatedAtTrait;
     use UpdatedAtTrait;
 
-    #[ORM\Column(type: 'string', length: 50)]
+    #[ORM\Column(type: Types::STRING, length: 50)]
     private string $name;
 
-    #[ORM\Column(type: 'string', length: 50)]
+    #[ORM\Column(type: Types::STRING, length: 50)]
     private string $surname;
 
-    #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[ORM\Column(type: Types::STRING, length: 180, unique: true)]
     private string $email;
 
-    #[ORM\Column(type: 'string')]
+    #[ORM\Column(type: Types::STRING)]
     private string $password;
 
-    #[ORM\Column(type: 'json')]
+    #[ORM\Column(type: Types::JSON)]
     private array $roles = [];
 
-    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     private bool $isActive = true;
 
-    #[ORM\Column(type: 'datetime', nullable: true, options: ['default' => null])]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, options: ['default' => null])]
     private ?\DateTimeInterface $tokenValidAfter = null;
 
     /**
