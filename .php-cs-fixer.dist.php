@@ -27,4 +27,5 @@ return (new PhpCsFixer\Config())
         'no_superfluous_phpdoc_tags' => true,
     ])
     ->setFinder($finder)
+    ->setCacheFile(__DIR__.'/var/.php-cs-fixer.cache')
 ;

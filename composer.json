@@ -62,6 +62,7 @@
         "psr-4": {
             "App\\": "src/App/",
             "User\\": "src/User/",
+            "Ticket\\": "src/Ticket/",
             "Common\\": "src/Common/"
         }
     },
