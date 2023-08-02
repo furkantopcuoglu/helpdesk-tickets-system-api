@@ -23,6 +23,16 @@ doctrine:
                 dir: '%kernel.project_dir%/src/User/Domain/Entity'
                 prefix: 'User\Domain\Entity'
                 alias: User
+            Ticket:
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Ticket/Domain/Entity'
+                prefix: 'Ticket\Domain\Entity'
+                alias: Ticket
+            Common:
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Common/Domain/Entity'
+                prefix: 'Common\Domain\Entity'
+                alias: Common
 
 when@test:
     doctrine:

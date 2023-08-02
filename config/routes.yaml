@@ -9,6 +9,10 @@ api_user_controllers:
     resource: ../src/User/Presentation/
     type: annotation
 
+api_ticket_controllers:
+    resource: ../src/Ticket/Presentation/
+    type: annotation
+
 kernel:
     resource: ../src/App/Kernel.php
     type: annotation

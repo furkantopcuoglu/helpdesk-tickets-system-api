@@ -26,6 +26,10 @@ services:
         resource: '../src/User/'
         exclude: '../src/User/Domain/{Entity}'
 
+    Ticket\:
+        resource: '../src/Ticket/'
+        exclude: '../src/Ticket/Domain/{Entity}'
+
     Common\:
         resource: '../src/Common/'
         exclude: '../src/Common/Domain/{DataTransferObject, Bus, Entity}'
@@ -42,6 +46,9 @@ services:
         resource: '../src/User/Presentation/'
         tags: [ 'controller.service_arguments' ]
 
+    Ticket\Presentation\:
+        resource: '../src/Ticket/Presentation/'
+        tags: [ 'controller.service_arguments' ]
 
     App\Infrastructure\Security\JWTCreatedListener:
         tags:
