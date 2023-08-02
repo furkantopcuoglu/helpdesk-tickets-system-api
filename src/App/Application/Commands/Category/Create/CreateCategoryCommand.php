@@ -9,5 +9,5 @@ class CreateCategoryCommand extends TraceableDataTransferObject implements Comma
 {
     public string $name;
     public string $color;
-    public bool $isDefault;
+    public bool $isDefault = true;
 }
