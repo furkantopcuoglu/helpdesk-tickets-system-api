@@ -4,15 +4,16 @@ namespace User\Application\Commands\User\Update;
 
 use User\Domain\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Common\Domain\Bus\Command\CommandHandler;
 
-readonly class UpdateUserCommandHandler
+readonly class UpdateUserCommandHandler implements CommandHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function handle(UpdateUserCommand $command): User
+    public function __invoke(UpdateUserCommand $command): User
     {
         $user = $command->user;
 

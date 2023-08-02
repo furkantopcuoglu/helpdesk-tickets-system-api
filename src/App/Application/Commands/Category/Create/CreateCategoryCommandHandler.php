@@ -4,15 +4,16 @@ namespace App\Application\Commands\Category\Create;
 
 use App\Domain\Entity\Category;
 use Doctrine\ORM\EntityManagerInterface;
+use Common\Domain\Bus\Command\CommandHandler;
 
-readonly class CreateCategoryCommandHandler
+readonly class CreateCategoryCommandHandler implements CommandHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function handle(CreateCategoryCommand $command): Category
+    public function __invoke(CreateCategoryCommand $command): Category
     {
         $category = new Category();
 

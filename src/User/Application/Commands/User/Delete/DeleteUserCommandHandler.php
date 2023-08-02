@@ -4,15 +4,16 @@ namespace User\Application\Commands\User\Delete;
 
 use User\Domain\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Common\Domain\Bus\Command\CommandHandler;
 
-readonly class DeleteUserCommandHandler
+readonly class DeleteUserCommandHandler implements CommandHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function handle(DeleteUserCommand $command): User
+    public function __invoke(DeleteUserCommand $command): User
     {
         $user = $command->user;
 

@@ -3,16 +3,17 @@
 namespace App\Application\Queries\Status\Find;
 
 use App\Domain\Entity\Status;
+use Common\Domain\Bus\Query\QueryHandler;
 use App\Domain\Repository\StatusRepositoryInterface;
 
-readonly class FindStatusQueryHandler
+readonly class FindStatusQueryHandler implements QueryHandler
 {
     public function __construct(
         private StatusRepositoryInterface $statusRepository,
     ) {
     }
 
-    public function handle(FindStatusQuery $query): ?Status
+    public function __invoke(FindStatusQuery $query): ?Status
     {
         return $this->statusRepository->find($query->getStatusId());
     }

@@ -4,15 +4,16 @@ namespace App\Application\Commands\Priority\Update;
 
 use App\Domain\Entity\Priority;
 use Doctrine\ORM\EntityManagerInterface;
+use Common\Domain\Bus\Command\CommandHandler;
 
-readonly class UpdatePriorityCommandHandler
+readonly class UpdatePriorityCommandHandler implements CommandHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function handle(UpdatePriorityCommand $command): Priority
+    public function __invoke(UpdatePriorityCommand $command): Priority
     {
         $priority = $command->priority;
 

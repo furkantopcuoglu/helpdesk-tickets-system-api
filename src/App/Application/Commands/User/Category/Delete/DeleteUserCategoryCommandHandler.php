@@ -3,15 +3,16 @@
 namespace App\Application\Commands\User\Category\Delete;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Common\Domain\Bus\Command\CommandHandler;
 
-readonly class DeleteUserCategoryCommandHandler
+readonly class DeleteUserCategoryCommandHandler implements CommandHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function handle(DeleteUserCategoryCommand $command): true
+    public function __invoke(DeleteUserCategoryCommand $command): true
     {
         $this->entityManager->remove($command->userCategory);
         $this->entityManager->flush();
