@@ -2,6 +2,7 @@
 
 namespace App\Domain\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Common\Application\Traits\UuidTrait;
 use App\Infrastructure\Repositories\Doctrine\StatusRepository;
@@ -12,10 +13,10 @@ class Status
 {
     use UuidTrait;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $name;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255)]
     private string $color;
 
     public function getName(): string
