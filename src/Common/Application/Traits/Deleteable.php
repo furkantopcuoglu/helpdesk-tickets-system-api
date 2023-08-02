@@ -3,14 +3,15 @@
 namespace Common\Application\Traits;
 
 use User\Domain\Entity\User;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 trait Deleteable
 {
-    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?\DateTimeInterface $deletedAt;
 
-    #[ORM\Column(type: 'boolean', nullable: true, options: ['default' => false])]
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true, options: ['default' => false])]
     protected ?bool $isDeleted = false;
 
     #[ORM\ManyToOne(targetEntity: 'User\Domain\Entity\User')]

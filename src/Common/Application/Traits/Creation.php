@@ -3,12 +3,13 @@
 namespace Common\Application\Traits;
 
 use User\Domain\Entity\User;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 trait Creation
 {
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     protected ?\DateTimeInterface $createdAt;
 
     #[ORM\ManyToOne(targetEntity: 'User\Domain\Entity\User')]
