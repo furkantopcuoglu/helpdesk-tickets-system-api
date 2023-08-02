@@ -2,16 +2,16 @@
 
 namespace App\Infrastructure\Command\Fixture;
 
-use Ramsey\Uuid\Uuid;
-use Doctrine\DBAL\Connection;
 use App\Application\Enum\StatusType;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Common\Infrastructure\MessageBus\MessengerQueryBus;
+use Common\Infrastructure\MessageBus\MessengerCommandBus;
+use App\Application\Commands\Status\Create\CreateStatusCommand;
 use App\Application\Queries\Status\FindOneBy\FindOneByStatusQuery;
-use App\Application\Queries\Status\FindOneBy\FindOneByStatusQueryHandler;
 
 #[AsCommand(
     name: 'fixture:status',
@@ -20,8 +20,8 @@ use App\Application\Queries\Status\FindOneBy\FindOneByStatusQueryHandler;
 class FixtureStatusCommand extends Command
 {
     public function __construct(
-        private readonly Connection $dbal,
-        private readonly FindOneByStatusQueryHandler $findOneByStatusQueryHandler,
+        private readonly MessengerCommandBus $commandBus,
+        private readonly MessengerQueryBus $queryBus,
     ) {
         parent::__construct();
     }
@@ -31,7 +31,7 @@ class FixtureStatusCommand extends Command
         $style = new SymfonyStyle($input, $output);
 
         foreach (StatusType::cases() as $status) {
-            $isExist = $this->findOneByStatusQueryHandler->handle(new FindOneByStatusQuery([
+            $isExist = $this->queryBus->handle(new FindOneByStatusQuery([
                 'name' => $status->value,
             ]));
 
@@ -41,11 +41,10 @@ class FixtureStatusCommand extends Command
                 continue;
             }
 
-            $this->dbal->insert('statuses', [
-                'id' => Uuid::uuid4()->toString(),
+            $this->commandBus->handle(new CreateStatusCommand([
                 'name' => $status->value,
                 'color' => StatusType::getColor($status),
-            ]);
+            ]));
 
             $style->success(sprintf('%s added.', $status->value));
         }

@@ -4,15 +4,16 @@ namespace App\Application\Commands\Category\Update;
 
 use App\Domain\Entity\Category;
 use Doctrine\ORM\EntityManagerInterface;
+use Common\Domain\Bus\Command\CommandHandler;
 
-readonly class UpdateCategoryCommandHandler
+readonly class UpdateCategoryCommandHandler implements CommandHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function handle(UpdateCategoryCommand $command): Category
+    public function __invoke(UpdateCategoryCommand $command): Category
     {
         $category = $command->category;
 

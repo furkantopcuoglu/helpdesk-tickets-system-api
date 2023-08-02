@@ -28,7 +28,7 @@ services:
 
     Common\:
         resource: '../src/Common/'
-        exclude: '../src/Common/Domain/{DataTransferObject}'
+        exclude: '../src/Common/Domain/{DataTransferObject, Bus}'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -61,3 +61,12 @@ services:
     App\Application\EventListener\ContentBodyListener:
         tags:
             - { name: kernel.event_listener, event: kernel.request, priority: 1 }
+
+    _instanceof:
+        Common\Domain\Bus\Command\CommandHandler:
+            tags:
+                - { name: messenger.message_handler, bus: command.bus }
+
+        Common\Domain\Bus\Query\QueryHandler:
+            tags:
+                - { name: messenger.message_handler, bus: query.bus }

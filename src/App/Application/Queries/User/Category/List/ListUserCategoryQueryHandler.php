@@ -3,16 +3,17 @@
 namespace App\Application\Queries\User\Category\List;
 
 use App\Domain\Entity\UserCategory;
+use Common\Domain\Bus\Query\QueryHandler;
 use App\Domain\Repository\UserCategoryRepositoryInterface;
 
-readonly class ListUserCategoryQueryHandler
+readonly class ListUserCategoryQueryHandler implements QueryHandler
 {
     public function __construct(
         private UserCategoryRepositoryInterface $userCategoryRepository,
     ) {
     }
 
-    public function handle(ListUserCategoryQuery $query): array
+    public function __invoke(ListUserCategoryQuery $query): array
     {
         $userCategories = $this->userCategoryRepository->findBy([
             'user' => $query->user,

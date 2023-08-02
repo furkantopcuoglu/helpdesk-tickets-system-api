@@ -4,15 +4,16 @@ namespace User\Application\Commands\User\Recovery;
 
 use User\Domain\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Common\Domain\Bus\Command\CommandHandler;
 
-readonly class RecoveryUserCommandHandler
+readonly class RecoveryUserCommandHandler implements CommandHandler
 {
     public function __construct(
         public EntityManagerInterface $entityManager,
     ) {
     }
 
-    public function handle(RecoveryUserCommand $command): User
+    public function __invoke(RecoveryUserCommand $command): User
     {
         $user = $command->user;
 
