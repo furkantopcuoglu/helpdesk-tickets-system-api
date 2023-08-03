@@ -6,6 +6,7 @@ use App\Domain\Entity\Category;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Domain\Repository\CategoryRepositoryInterface;
+use App\Application\Queries\Category\List\ListCategoryQuery;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
@@ -21,13 +22,16 @@ class CategoryRepository extends ServiceEntityRepository implements CategoryRepo
         parent::__construct($registry, Category::class);
     }
 
-    public function listAll()
+    public function listAll(ListCategoryQuery $query)
     {
         $qb = $this->createQueryBuilder('category');
 
-        $qb->select('category')
-            ->where($qb->expr()->eq('category.isDefault', ':isDefault'))
-            ->setParameter('isDefault', true);
+        $qb->select('category');
+
+        if ($query->hasParameter('isDefault')) {
+            $qb->where($qb->expr()->eq('category.isDefault', ':isDefault'))
+                ->setParameter('isDefault', $query->isDefault);
+        }
 
         return $qb->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
     }
