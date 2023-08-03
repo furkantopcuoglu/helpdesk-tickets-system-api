@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Presentation\Admin\Priority;
+namespace App\Presentation\App\Priority;
 
 use Common\Application\Utils\Payload;
 use App\Presentation\AbstractController;
@@ -12,7 +12,7 @@ use Common\Infrastructure\MessageBus\MessengerQueryBus;
 use App\Application\Queries\Priority\List\ListPriorityQuery;
 
 #[Route(
-    path: '/api/admin/priority',
+    path: '/api/priority',
     methods: Request::METHOD_GET,
 )]
 class IndexController extends AbstractController

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Presentation\Admin\Status;
+namespace App\Presentation\App\Status;
 
 use Common\Application\Utils\Payload;
 use App\Presentation\AbstractController;
@@ -12,7 +12,7 @@ use Common\Infrastructure\MessageBus\MessengerQueryBus;
 use App\Application\Queries\Status\List\ListStatusQuery;
 
 #[Route(
-    path: '/api/admin/status',
+    path: '/api/status',
     methods: Request::METHOD_GET,
 )]
 class IndexController extends AbstractController
