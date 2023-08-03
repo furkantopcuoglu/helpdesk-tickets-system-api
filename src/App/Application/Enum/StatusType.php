@@ -2,8 +2,12 @@
 
 namespace App\Application\Enum;
 
+use Common\Application\Traits\EnumToArrayTrait;
+
 enum StatusType: string
 {
+    use EnumToArrayTrait;
+
     case NEW = 'New';
     case PENDING = 'Pending';
     case WAITING = 'Waiting';
