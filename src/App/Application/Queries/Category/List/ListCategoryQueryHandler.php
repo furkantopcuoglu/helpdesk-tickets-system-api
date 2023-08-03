@@ -14,6 +14,6 @@ readonly class ListCategoryQueryHandler implements QueryHandler
 
     public function __invoke(ListCategoryQuery $query)
     {
-        return $this->categoryRepository->listAll();
+        return $this->categoryRepository->listAll($query);
     }
 }

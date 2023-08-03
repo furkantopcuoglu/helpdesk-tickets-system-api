@@ -3,7 +3,9 @@
 namespace App\Application\Queries\Category\List;
 
 use Common\Domain\Bus\Query\Query;
+use Common\Domain\DataTransferObject\TraceableDataTransferObject;
 
-class ListCategoryQuery implements Query
+class ListCategoryQuery extends TraceableDataTransferObject implements Query
 {
+    public ?bool $isDefault;
 }
