@@ -10,4 +10,5 @@ class FindOneByCategoryQuery extends TraceableDataTransferObject implements Quer
     public ?string $id;
     public ?string $name;
     public ?string $color;
+    public ?bool $isDefault;
 }

@@ -2,8 +2,12 @@
 
 namespace App\Application\Enum;
 
+use Common\Application\Traits\EnumToArrayTrait;
+
 enum CategoryType: string
 {
+    use EnumToArrayTrait;
+
     case PROBLEM = 'Problem';
     case BILLING = 'Billing';
     case REQUEST = 'Request';

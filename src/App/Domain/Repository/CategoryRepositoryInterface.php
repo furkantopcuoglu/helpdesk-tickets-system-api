@@ -3,6 +3,7 @@
 namespace App\Domain\Repository;
 
 use App\Domain\Entity\Category;
+use App\Application\Queries\Category\List\ListCategoryQuery;
 
 /**
  * @method Category|null find($id, $lockMode = null, $lockVersion = null)
@@ -12,5 +13,5 @@ use App\Domain\Entity\Category;
  */
 interface CategoryRepositoryInterface
 {
-    public function listAll();
+    public function listAll(ListCategoryQuery $query);
 }
