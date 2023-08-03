@@ -2,8 +2,12 @@
 
 namespace App\Application\Enum;
 
+use Common\Application\Traits\EnumToArrayTrait;
+
 enum PriorityType: string
 {
+    use EnumToArrayTrait;
+
     case LOW = 'Low';
     case MEDIUM = 'Medium';
     case HIGH = 'High';
