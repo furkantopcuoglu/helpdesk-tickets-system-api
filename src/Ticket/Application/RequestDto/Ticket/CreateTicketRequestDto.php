@@ -3,30 +3,35 @@
 namespace Ticket\Application\RequestDto\Ticket;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Constraints\PasswordStrength;
 
 readonly class CreateTicketRequestDto
 {
     public function __construct(
+        #[Assert\NotNull]
+        #[Assert\NotBlank]
+        public string $subject,
+
+        #[Assert\NotNull]
+        #[Assert\NotBlank]
+        public string $content,
+
+        #[Assert\NotNull]
+        #[Assert\NotBlank]
+        #[Assert\Uuid]
+        public string $priorityId,
+
+        #[Assert\NotNull]
+        #[Assert\NotBlank]
+        #[Assert\Uuid]
+        public string $categoryId,
+
         #[Assert\Optional]
-        public ?string $subject,
-
-        #[Assert\NotNull]
-        #[Assert\NotBlank]
-        #[Assert\Length(min: 1, max: 40)]
-        public string $name,
-
-        #[Assert\NotNull]
-        #[Assert\NotBlank]
-        #[Assert\Length(min: 1, max: 40)]
-        public string $surname,
-
-        #[Assert\NotNull]
-        #[Assert\NotBlank]
-        #[Assert\PasswordStrength([
-            'minScore' => PasswordStrength::STRENGTH_MEDIUM,
-        ])]
-        public string $password,
+        #[Assert\Count(
+            min: 1,
+            max: 3,
+        )]
+        #[Assert\All(constraints: new Assert\Uuid())]
+        public ?array $files,
     ) {
     }
 

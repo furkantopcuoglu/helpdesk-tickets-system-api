@@ -13,6 +13,10 @@ api_ticket_controllers:
     resource: ../src/Ticket/Presentation/
     type: annotation
 
+api_support_controllers:
+    resource: ../src/Support/Presentation/
+    type: annotation
+
 kernel:
     resource: ../src/App/Kernel.php
     type: annotation
