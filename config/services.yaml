@@ -7,6 +7,9 @@ parameters:
     # Messenger
     messenger.default_max_retries: 15
 
+    # Chatter Telegram Enabled
+    chatter.telegram.enabled: "%env(CHATTER_TELEGRAM_ENABLED)%"
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -30,6 +33,9 @@ services:
         resource: '../src/Ticket/'
         exclude: '../src/Ticket/Domain/{Entity}'
 
+    Support\:
+        resource: '../src/Support/'
+
     Common\:
         resource: '../src/Common/'
         exclude: '../src/Common/Domain/{DataTransferObject, Bus, Entity}'
@@ -50,6 +56,10 @@ services:
         resource: '../src/Ticket/Presentation/'
         tags: [ 'controller.service_arguments' ]
 
+    Support\Presentation\:
+        resource: '../src/Support/Presentation/'
+        tags: [ 'controller.service_arguments' ]
+
     App\Infrastructure\Security\JWTCreatedListener:
         tags:
             - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created }
@@ -68,6 +78,10 @@ services:
     App\Application\EventListener\ContentBodyListener:
         tags:
             - { name: kernel.event_listener, event: kernel.request, priority: 1 }
+
+    Ticket\Application\EventListeners\Ticket\CreateTicketEventListener:
+        tags:
+            - { name: kernel.event_listener, event: create.ticket }
 
     _instanceof:
         Common\Domain\Bus\Command\CommandHandler:

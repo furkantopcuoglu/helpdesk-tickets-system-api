@@ -22,4 +22,15 @@ enum PriorityType: string
             self::CRITICAL => '#FF0000',
         };
     }
+
+    public static function getEmoji(string $color): string
+    {
+        return match ($color) {
+            '#008000' => '🟢',
+            '#FFFF00' => '🟡',
+            '#FFA500' => '🟠',
+            '#FF0000' => '🔴',
+            default => '',
+        };
+    }
 }

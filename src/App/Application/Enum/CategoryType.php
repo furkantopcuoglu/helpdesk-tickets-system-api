@@ -26,4 +26,15 @@ enum CategoryType: string
             self::TECHNICAL_SUPPORT => '#FF33C8',
         };
     }
+
+    public static function getEmoji(string $color): string
+    {
+        return match ($color) {
+            '#3366FF', '#33FFD4' => '🔵',
+            '#33FFA8', '#33FF9A' => '🟢',
+            '#FFCA33' => '🟡',
+            '#FF33C8' => '🔴',
+            default => '',
+        };
+    }
 }

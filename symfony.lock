@@ -255,6 +255,15 @@
             "config/packages/security.yaml"
         ]
     },
+    "symfony/telegram-notifier": {
+        "version": "6.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "5.0",
+            "ref": "6cecb59a0e96c9e1cee469f2b82fa920101a68e8"
+        }
+    },
     "symfony/twig-bundle": {
         "version": "6.3",
         "recipe": {
