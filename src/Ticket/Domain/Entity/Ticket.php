@@ -27,8 +27,11 @@ class Ticket
     use Deleteable;
     use Archivable;
 
-    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
-    private ?string $subject;
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private string $subject;
+
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    private string $ticketNo;
 
     #[ORM\Column(type: Types::TEXT)]
     private string $content;
@@ -48,12 +51,12 @@ class Ticket
     #[ORM\ManyToOne(targetEntity: Category::class)]
     private ?Category $category;
 
-    public function getSubject(): ?string
+    public function getSubject(): string
     {
         return $this->subject;
     }
 
-    public function setSubject(?string $subject): void
+    public function setSubject(string $subject): void
     {
         $this->subject = $subject;
     }
@@ -116,5 +119,15 @@ class Ticket
     public function setCategory(?Category $category): void
     {
         $this->category = $category;
+    }
+
+    public function getTicketNo(): string
+    {
+        return $this->ticketNo;
+    }
+
+    public function setTicketNo(string $ticketNo): void
+    {
+        $this->ticketNo = $ticketNo;
     }
 }
