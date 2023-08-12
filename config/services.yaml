@@ -7,9 +7,6 @@ parameters:
     # Messenger
     messenger.default_max_retries: 15
 
-    # Chatter Telegram Enabled
-    chatter.telegram.enabled: "%env(CHATTER_TELEGRAM_ENABLED)%"
-
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -82,6 +79,11 @@ services:
     Ticket\Application\EventListeners\Ticket\CreateTicketEventListener:
         tags:
             - { name: kernel.event_listener, event: create.ticket }
+
+    Ticket\Application\EventListeners\Ticket\UpdateTicketEventListener:
+        tags:
+            - { name: kernel.event_listener, event: update.ticket }
+
 
     _instanceof:
         Common\Domain\Bus\Command\CommandHandler:

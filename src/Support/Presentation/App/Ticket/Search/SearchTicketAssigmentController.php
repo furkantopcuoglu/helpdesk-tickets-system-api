@@ -14,10 +14,10 @@ use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Ticket\Application\Queries\Ticket\Search\SearchTicketQuery;
 
 #[Route(
-    path: '/api/support/assigment-tickets',
+    path: '/api/support/tickets',
     methods: Request::METHOD_GET,
 )]
-class SearchTicketController extends AbstractController
+class SearchTicketAssigmentController extends AbstractController
 {
     public function __construct(
         private readonly MessengerQueryBus $queryBus,
@@ -29,9 +29,8 @@ class SearchTicketController extends AbstractController
     ): Payload {
         /** @var PaginationResponse $paginationResponse */
         $paginationResponse = $this->queryBus->handle(
-            new SearchTicketQuery([$queryDto?->toArray() ?? [], ...[
-                'isAssigment' => true,
-                'supportId' => $this->getUserId(),
+            new SearchTicketQuery([...($queryDto?->toArray() ?? []), ...[
+                'isAssigment' => false,
             ]]),
         );
 
