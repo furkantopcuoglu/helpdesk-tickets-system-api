@@ -86,7 +86,16 @@ readonly class SearchTicketQueryHandler implements QueryHandler
             $qb->setParameter('owner', $query->userId);
         }
 
-        if ($query->hasParameter('supportId')) {
+        if ($query->hasParameter('isAssigment') && true === $query->isAssigment) {
+            $qb->andWhere($qb->expr()->eq('ticket.support', ':support'));
+            $qb->setParameter('support', $query->supportId);
+        }
+
+        if ($query->hasParameter('isAssigment') && false === $query->isAssigment) {
+            $qb->andWhere($qb->expr()->isNull('ticket.support'));
+        }
+
+        if (!$query->hasParameter('isAssigment') && $query->hasParameter('supportId')) {
             $qb->andWhere($qb->expr()->eq('ticket.support', ':support'));
             $qb->setParameter('support', $query->supportId);
         }

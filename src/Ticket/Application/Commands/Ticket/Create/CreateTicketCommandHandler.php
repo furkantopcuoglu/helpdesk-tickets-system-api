@@ -8,6 +8,7 @@ use App\Application\Enum\StatusType;
 use Doctrine\ORM\EntityManagerInterface;
 use Common\Domain\Bus\Command\CommandHandler;
 use Common\Application\Traits\RandomUniqTrait;
+use Common\Application\Enum\TelegramChatterType;
 use Ticket\Application\Events\Ticket\TicketEvent;
 use Common\Infrastructure\MessageBus\MessengerQueryBus;
 use Common\Infrastructure\MessageBus\MessengerCommandBus;
@@ -79,7 +80,10 @@ class CreateTicketCommandHandler implements CommandHandler
     public function triggerEvent(): void
     {
         $this->dispatcher->dispatch(
-            new TicketEvent($this->getTicket()->getId()->toString()),
+            new TicketEvent(
+                $this->getTicket()->getId()->toString(),
+                TelegramChatterType::NEW_TICKET,
+            ),
             TicketEvent::CREATE_TICKET,
         );
     }

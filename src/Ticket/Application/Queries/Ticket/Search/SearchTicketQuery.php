@@ -15,6 +15,7 @@ class SearchTicketQuery extends TraceableDataTransferObject implements Query
     public ?string $statusId;
     public ?string $userId;
     public ?string $supportId;
+    public ?bool $isAssigment;
     public int $page = 1;
     public int $perPage = 50;
 }
