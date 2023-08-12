@@ -5,15 +5,21 @@ namespace Ticket\Application\Commands\Ticket\Update;
 use Ticket\Domain\Entity\Ticket;
 use Doctrine\ORM\EntityManagerInterface;
 use Common\Domain\Bus\Command\CommandHandler;
+use Common\Application\Enum\TelegramChatterType;
+use Ticket\Application\Events\Ticket\TicketEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-readonly class UpdateTicketCommandHandler implements CommandHandler
+class UpdateTicketCommandHandler implements CommandHandler
 {
+    private ?Ticket $ticket;
+
     public function __construct(
-        private EntityManagerInterface $entityManager,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly EventDispatcherInterface $dispatcher,
     ) {
     }
 
-    public function __invoke(UpdateTicketCommand $command): Ticket
+    public function __invoke(UpdateTicketCommand $command): self
     {
         $ticket = $command->ticket;
 
@@ -64,6 +70,24 @@ readonly class UpdateTicketCommandHandler implements CommandHandler
         $this->entityManager->persist($ticket);
         $this->entityManager->flush();
 
-        return $ticket;
+        $this->ticket = $ticket;
+
+        return $this;
+    }
+
+    public function getTicket(): ?Ticket
+    {
+        return $this->ticket;
+    }
+
+    public function triggerEvent(TelegramChatterType $chatterType): void
+    {
+        $this->dispatcher->dispatch(
+            new TicketEvent(
+                $this->getTicket()->getId()->toString(),
+                $chatterType,
+            ),
+            TicketEvent::UPDATE_TICKET,
+        );
     }
 }

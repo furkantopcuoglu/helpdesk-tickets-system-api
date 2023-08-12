@@ -27,9 +27,6 @@ class SearchTicketQueryDto
 
         #[Assert\Optional]
         public ?string $userId,
-
-        #[Assert\Optional]
-        public ?string $supportId,
     ) {
     }
 

@@ -8,7 +8,7 @@ use Common\Infrastructure\MessageBus\MessengerQueryBus;
 use Ticket\Application\Queries\Ticket\Find\FindTicketQuery;
 use Common\Infrastructure\ChatterServices\Telegram\TelegramChatterFactory;
 
-readonly class CreateTicketEventListener
+readonly class UpdateTicketEventListener
 {
     public function __construct(
         private MessengerQueryBus $queryBus,
@@ -21,7 +21,6 @@ readonly class CreateTicketEventListener
         /** @var Ticket $ticket */
         $ticket = $this->queryBus->handle(new FindTicketQuery($event->getId()));
 
-        // Telegram Chatter New Ticket
         $this->telegramChatterFactory
             ->createTelegramChatter($event->getChatterType())
             ->sendMessage($ticket);
