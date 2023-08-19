@@ -7,37 +7,25 @@ use Common\Application\Utils\Payload;
 use App\Presentation\AbstractController;
 use Aura\Payload_Interface\PayloadStatus;
 use Symfony\Component\HttpFoundation\Request;
-use App\Domain\Exceptions\BadRequestException;
+use App\Domain\ParamConverts\PriorityConverter;
 use Symfony\Component\Routing\Annotation\Route;
 use Common\Application\Utils\RouteRequirementUtil;
-use Common\Infrastructure\MessageBus\MessengerQueryBus;
-use App\Application\Queries\Priority\Find\FindPriorityQuery;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 #[Route(
-    path: '/api/admin/priority/{priorityId}',
+    path: '/api/admin/priority/{priority}',
     requirements: [
-        'priorityId' => RouteRequirementUtil::uuid,
+        'priority' => RouteRequirementUtil::uuid,
     ],
     methods: Request::METHOD_GET,
 )]
+#[ParamConverter('priority', class: PriorityConverter::class)]
 class DetailController extends AbstractController
 {
-    public function __construct(
-        private readonly MessengerQueryBus $queryBus,
-    ) {
-    }
-
-    public function __invoke(string $priorityId): Payload
+    public function __invoke(Priority $priority): Payload
     {
-        /** @var Priority|null $isExistPriority */
-        $isExistPriority = $this->queryBus->handle(new FindPriorityQuery($priorityId));
-
-        if (!($isExistPriority instanceof Priority)) {
-            throw new BadRequestException('NOT_FOUND_PRIORITY');
-        }
-
         return $this->createPayload()
             ->setStatus(PayloadStatus::SUCCESS)
-            ->setExtras($this->createSerializer()->normalize($isExistPriority));
+            ->setExtras($this->createSerializer()->normalize($priority));
     }
 }

@@ -6,27 +6,27 @@ use App\Domain\Entity\Status;
 use Common\Application\Utils\Payload;
 use App\Presentation\AbstractController;
 use Aura\Payload_Interface\PayloadStatus;
+use App\Domain\ParamConverts\StatusConverter;
 use Symfony\Component\HttpFoundation\Request;
 use App\Domain\Exceptions\BadRequestException;
 use Symfony\Component\Routing\Annotation\Route;
 use Common\Application\Utils\RouteRequirementUtil;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Common\Infrastructure\MessageBus\MessengerQueryBus;
-use App\Application\Queries\Status\Find\FindStatusQuery;
 use Common\Infrastructure\MessageBus\MessengerCommandBus;
 use App\Application\RequestDto\Status\CreateStatusRequestDto;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use App\Application\Commands\Status\Update\UpdateStatusCommand;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use App\Application\Queries\Status\FindOneBy\FindOneByStatusQuery;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 #[Route(
-    path: '/api/admin/status/{statusId}',
+    path: '/api/admin/status/{status}',
     requirements: [
-        'statusId' => RouteRequirementUtil::uuid,
+        'status' => RouteRequirementUtil::uuid,
     ],
     methods: Request::METHOD_PUT,
 )]
+#[ParamConverter('status', class: StatusConverter::class)]
 class UpdateController extends AbstractController
 {
     public function __construct(
@@ -36,16 +36,9 @@ class UpdateController extends AbstractController
     }
 
     public function __invoke(
-        string $statusId,
+        Status $status,
         #[MapRequestPayload] CreateStatusRequestDto $createStatusRequestDto,
     ): Payload {
-        /** @var Status|null $isExistStatus */
-        $isExistStatus = $this->queryBus->handle(new FindStatusQuery($statusId));
-
-        if (!($isExistStatus instanceof Status)) {
-            throw new BadRequestException('NOT_FOUND_STATUS');
-        }
-
         /** @var Status|null $isExistName */
         $isExistName = $this->queryBus->handle(new FindOneByStatusQuery([
             'name' => $createStatusRequestDto->name,
@@ -53,29 +46,21 @@ class UpdateController extends AbstractController
 
         if (
             ($isExistName instanceof Status)
-            && !$isExistName->getId()->equals($isExistStatus->getId())
+            && !$isExistName->getId()->equals($status->getId())
         ) {
             throw new BadRequestException('STATUS_EXIST');
         }
 
         /** @var Status $status */
         $status = $this->commandBus->handle(new UpdateStatusCommand([
-            'status' => $isExistStatus,
+            'status' => $status,
             'name' => $createStatusRequestDto->name,
             'color' => $createStatusRequestDto->color,
         ]));
 
         return $this->createPayload()
             ->setStatus(PayloadStatus::UPDATED)
-            ->setExtras($this->createSerializer()->normalize($status,
-                format: JsonEncoder::FORMAT,
-                context: [
-                    AbstractNormalizer::ATTRIBUTES => [
-                        'id',
-                        'name',
-                        'color',
-                    ],
-                ]))
+            ->setExtras($this->createSerializer()->normalize($status))
             ->setOutput($createStatusRequestDto);
     }
 }

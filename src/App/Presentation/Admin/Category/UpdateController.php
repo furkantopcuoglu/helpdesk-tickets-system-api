@@ -8,25 +8,25 @@ use App\Presentation\AbstractController;
 use Aura\Payload_Interface\PayloadStatus;
 use Symfony\Component\HttpFoundation\Request;
 use App\Domain\Exceptions\BadRequestException;
+use App\Domain\ParamConverts\CategoryConverter;
 use Symfony\Component\Routing\Annotation\Route;
 use Common\Application\Utils\RouteRequirementUtil;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Common\Infrastructure\MessageBus\MessengerQueryBus;
 use Common\Infrastructure\MessageBus\MessengerCommandBus;
-use App\Application\Queries\Category\Find\FindCategoryQuery;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use App\Application\RequestDto\Category\CreateCategoryRequestDto;
 use App\Application\Commands\Category\Update\UpdateCategoryCommand;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use App\Application\Queries\Category\FindOneBy\FindOneByCategoryQuery;
 
 #[Route(
-    path: '/api/admin/category/{categoryId}',
+    path: '/api/admin/category/{category}',
     requirements: [
-        'categoryId' => RouteRequirementUtil::uuid,
+        'category' => RouteRequirementUtil::uuid,
     ],
     methods: Request::METHOD_PUT,
 )]
+#[ParamConverter('category', class: CategoryConverter::class)]
 class UpdateController extends AbstractController
 {
     public function __construct(
@@ -36,16 +36,9 @@ class UpdateController extends AbstractController
     }
 
     public function __invoke(
-        string $categoryId,
+        Category $category,
         #[MapRequestPayload] CreateCategoryRequestDto $createCategoryRequestDto,
     ): Payload {
-        /** @var Category|null $isExistCategory */
-        $isExistCategory = $this->queryBus->handle(new FindCategoryQuery($categoryId));
-
-        if (!($isExistCategory instanceof Category)) {
-            throw new BadRequestException('NOT_FOUND_CATEGORY');
-        }
-
         /** @var Category|null $isExistName */
         $isExistName = $this->queryBus->handle(new FindOneByCategoryQuery([
             'name' => $createCategoryRequestDto->name,
@@ -53,30 +46,21 @@ class UpdateController extends AbstractController
 
         if (
             ($isExistName instanceof Category)
-            && !$isExistName->getId()->equals($isExistCategory->getId())
+            && !$isExistName->getId()->equals($category->getId())
         ) {
             throw new BadRequestException('CATEGORY_EXIST');
         }
 
         /** @var Category $category */
         $category = $this->commandBus->handle(new UpdateCategoryCommand([
-            'category' => $isExistCategory,
+            'category' => $category,
             'name' => $createCategoryRequestDto->name,
             'color' => $createCategoryRequestDto->color,
         ]));
 
         return $this->createPayload()
             ->setStatus(PayloadStatus::UPDATED)
-            ->setExtras($this->createSerializer()->normalize($category,
-                format: JsonEncoder::FORMAT,
-                context: [
-                    AbstractNormalizer::ATTRIBUTES => [
-                        'id',
-                        'name',
-                        'color',
-                        'isDefault',
-                    ],
-                ]))
+            ->setExtras($this->createSerializer()->normalize($category))
             ->setOutput($createCategoryRequestDto);
     }
 }
