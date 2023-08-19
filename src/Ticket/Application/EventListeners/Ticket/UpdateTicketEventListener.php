@@ -4,15 +4,16 @@ namespace Ticket\Application\EventListeners\Ticket;
 
 use Ticket\Domain\Entity\Ticket;
 use Ticket\Application\Events\Ticket\TicketEvent;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Common\Infrastructure\MessageBus\MessengerQueryBus;
 use Ticket\Application\Queries\Ticket\Find\FindTicketQuery;
-use Common\Infrastructure\ChatterServices\Telegram\TelegramChatterFactory;
+use Common\Domain\Message\SendTelegramNotificationQueueMessage;
 
 readonly class UpdateTicketEventListener
 {
     public function __construct(
         private MessengerQueryBus $queryBus,
-        private TelegramChatterFactory $telegramChatterFactory,
+        private MessageBusInterface $bus,
     ) {
     }
 
@@ -21,8 +22,10 @@ readonly class UpdateTicketEventListener
         /** @var Ticket $ticket */
         $ticket = $this->queryBus->handle(new FindTicketQuery($event->getId()));
 
-        $this->telegramChatterFactory
-            ->createTelegramChatter($event->getChatterType())
-            ->sendMessage($ticket);
+        // Update Ticket Telegram Notification
+        $this->bus->dispatch(new SendTelegramNotificationQueueMessage([
+            'ticket' => $ticket,
+            'telegramChatterType' => $event->getChatterType(),
+        ]));
     }
 }

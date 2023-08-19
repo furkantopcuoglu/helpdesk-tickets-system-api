@@ -21,3 +21,5 @@ framework:
                     max_retries: '%messenger.default_max_retries%'
 
         routing:
+            'Common\Domain\Message\SendEmailQueueMessage': async
+            'Common\Domain\Message\SendTelegramNotificationQueueMessage': async

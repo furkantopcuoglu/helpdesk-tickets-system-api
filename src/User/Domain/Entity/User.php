@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Common\Application\Traits\CreatedAtTrait;
 use Common\Application\Traits\UpdatedAtTrait;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use User\Infrastructure\Repositories\Doctrine\UserRepository;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -25,12 +26,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     use UpdatedAtTrait;
 
     #[ORM\Column(type: Types::STRING, length: 50)]
+    #[Groups(groups: ['userDetail'])]
     private string $name;
 
     #[ORM\Column(type: Types::STRING, length: 50)]
+    #[Groups(groups: ['userDetail'])]
     private string $surname;
 
     #[ORM\Column(type: Types::STRING, length: 180, unique: true)]
+    #[Groups(groups: ['userDetail'])]
     private string $email;
 
     #[ORM\Column(type: Types::STRING)]
