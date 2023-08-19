@@ -8,25 +8,25 @@ use App\Presentation\AbstractController;
 use Aura\Payload_Interface\PayloadStatus;
 use Symfony\Component\HttpFoundation\Request;
 use App\Domain\Exceptions\BadRequestException;
+use App\Domain\ParamConverts\PriorityConverter;
 use Symfony\Component\Routing\Annotation\Route;
 use Common\Application\Utils\RouteRequirementUtil;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Common\Infrastructure\MessageBus\MessengerQueryBus;
 use Common\Infrastructure\MessageBus\MessengerCommandBus;
-use App\Application\Queries\Priority\Find\FindPriorityQuery;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use App\Application\RequestDto\Priority\CreatePriorityRequestDto;
 use App\Application\Commands\Priority\Update\UpdatePriorityCommand;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use App\Application\Queries\Priority\FindOneBy\FindOneByPriorityQuery;
 
 #[Route(
-    path: '/api/admin/priority/{priorityId}',
+    path: '/api/admin/priority/{priority}',
     requirements: [
-        'priorityId' => RouteRequirementUtil::uuid,
+        'priority' => RouteRequirementUtil::uuid,
     ],
     methods: Request::METHOD_PUT,
 )]
+#[ParamConverter('priority', class: PriorityConverter::class)]
 class UpdateController extends AbstractController
 {
     public function __construct(
@@ -36,16 +36,9 @@ class UpdateController extends AbstractController
     }
 
     public function __invoke(
-        string $priorityId,
+        Priority $priority,
         #[MapRequestPayload] CreatePriorityRequestDto $createPriorityRequestDto,
     ): Payload {
-        /** @var Priority|null $isExistPriority */
-        $isExistPriority = $this->queryBus->handle(new FindPriorityQuery($priorityId));
-
-        if (!($isExistPriority instanceof Priority)) {
-            throw new BadRequestException('NOT_FOUND_PRIORITY');
-        }
-
         /** @var Priority|null $isExistName */
         $isExistName = $this->queryBus->handle(new FindOneByPriorityQuery([
             'name' => $createPriorityRequestDto->name,
@@ -53,29 +46,21 @@ class UpdateController extends AbstractController
 
         if (
             ($isExistName instanceof Priority)
-            && !$isExistName->getId()->equals($isExistPriority->getId())
+            && !$isExistName->getId()->equals($priority->getId())
         ) {
             throw new BadRequestException('PRIORITY_EXIST');
         }
 
         /** @var Priority $priority */
         $priority = $this->commandBus->handle(new UpdatePriorityCommand([
-            'priority' => $isExistPriority,
+            'priority' => $priority,
             'name' => $createPriorityRequestDto->name,
             'color' => $createPriorityRequestDto->color,
         ]));
 
         return $this->createPayload()
             ->setStatus(PayloadStatus::UPDATED)
-            ->setExtras($this->createSerializer()->normalize($priority,
-                format: JsonEncoder::FORMAT,
-                context: [
-                    AbstractNormalizer::ATTRIBUTES => [
-                        'id',
-                        'name',
-                        'color',
-                    ],
-                ]))
+            ->setExtras($this->createSerializer()->normalize($priority))
             ->setOutput($createPriorityRequestDto);
     }
 }

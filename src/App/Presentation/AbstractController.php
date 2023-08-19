@@ -37,14 +37,14 @@ abstract class AbstractController extends BaseController
     protected function createSerializer(): Serializer
     {
         $encoder = new JsonEncoder();
+        $dateTimeNormalizerContext = [
+            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
+        ];
+
         $objectNormalizerContext = [
             AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
                 return $object->getId();
             },
-        ];
-
-        $dateTimeNormalizerContext = [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
         ];
 
         $objectNormalizer = new ObjectNormalizer(defaultContext: $objectNormalizerContext);

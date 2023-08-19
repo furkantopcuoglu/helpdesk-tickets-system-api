@@ -7,37 +7,25 @@ use Common\Application\Utils\Payload;
 use App\Presentation\AbstractController;
 use Aura\Payload_Interface\PayloadStatus;
 use Symfony\Component\HttpFoundation\Request;
-use App\Domain\Exceptions\BadRequestException;
+use App\Domain\ParamConverts\CategoryConverter;
 use Symfony\Component\Routing\Annotation\Route;
 use Common\Application\Utils\RouteRequirementUtil;
-use Common\Infrastructure\MessageBus\MessengerQueryBus;
-use App\Application\Queries\Category\Find\FindCategoryQuery;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 #[Route(
-    path: '/api/admin/category/{categoryId}',
+    path: '/api/admin/category/{category}',
     requirements: [
-        'categoryId' => RouteRequirementUtil::uuid,
+        'category' => RouteRequirementUtil::uuid,
     ],
     methods: Request::METHOD_GET,
 )]
+#[ParamConverter('category', class: CategoryConverter::class)]
 class DetailController extends AbstractController
 {
-    public function __construct(
-        private readonly MessengerQueryBus $queryBus,
-    ) {
-    }
-
-    public function __invoke(string $categoryId): Payload
+    public function __invoke(Category $category): Payload
     {
-        /** @var Category|null $isExistCategory */
-        $isExistCategory = $this->queryBus->handle(new FindCategoryQuery($categoryId));
-
-        if (!($isExistCategory instanceof Category)) {
-            throw new BadRequestException('NOT_FOUND_CATEGORY');
-        }
-
         return $this->createPayload()
             ->setStatus(PayloadStatus::SUCCESS)
-            ->setExtras($this->createSerializer()->normalize($isExistCategory));
+            ->setExtras($this->createSerializer()->normalize($category));
     }
 }
