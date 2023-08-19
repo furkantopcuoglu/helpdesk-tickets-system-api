@@ -1,0 +1,45 @@
+{# @var user \User\Domain\Entity\User #}
+<html lang="tr">
+<head>
+<style>
+    .content {
+        color: #B0413E
+    }
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style>
+</head>
+<body>
+<table>
+    <tr>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>User Email</th>
+    </tr>
+    <tr>
+        <td>{{ sendEmail }}</td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.surname }}</td>
+        <td>{{ user.email }}</td>
+    </tr>
+</table>
+
+<div class="content">
+    {{ content }}
+</div>
+</body>
+</html>
