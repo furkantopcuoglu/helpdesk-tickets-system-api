@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Domain\Exceptions\BadRequestException;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Domain\Exceptions\FailedOperationException;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Common\Infrastructure\MessageBus\MessengerQueryBus;
 use Common\Application\Queries\Media\Find\FindMediaQuery;
@@ -17,6 +18,7 @@ use Common\Infrastructure\MessageBus\MessengerCommandBus;
 use App\Application\Queries\Category\Find\FindCategoryQuery;
 use App\Application\Queries\Priority\Find\FindPriorityQuery;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Ticket\Application\RequestDto\Ticket\CreateTicketRequestDto;
 use Ticket\Application\Commands\Ticket\Create\CreateTicketCommand;
 use Ticket\Application\Commands\Ticket\Create\CreateTicketCommandHandler;
@@ -60,8 +62,13 @@ class CreateController extends AbstractController
 
         return $this->createPayload()
             ->setStatus(PayloadStatus::CREATED)
-            ->setExtras($this->createSerializer()
-                ->normalize($ticket))
+            ->setExtras($this->createSerializer()->normalize($ticket,
+                format: JsonEncoder::FORMAT,
+                context: [
+                    AbstractNormalizer::ATTRIBUTES => [
+                        'id',
+                    ],
+                ]))
             ->setOutput($dto->toArray());
     }
 
