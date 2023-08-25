@@ -7,7 +7,10 @@ run-cs-fixer:
 run-cs-fixer-fixed:
 	php vendor/bin/php-cs-fixer fix src/
 generate-jwt:
+	mkdir config/jwt
 	php bin/console lexik:jwt:generate-keypair
+	openssl genrsa -out config/jwt/private.pem -aes256 4096
+	openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
 update-sql:
 	php bin/console d:s:u --force --dump-sql --complete
 event-request-list:
@@ -23,3 +26,7 @@ migration-create:
 	php bin/console make:migration
 migration-update:
 	php bin/console doctrine:migrations:migrate
+run-fixture:
+	php bin/console fixture:category
+	php bin/console fixture:priority
+	php bin/console fixture:status
